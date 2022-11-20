@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import AutoCompleteInput from "./components/AutoCompleteInput.vue";
-import type { AutoCompleteOption } from "./components/AutoCompleteOption";
+import type { AutoCompleteOption } from "./components/AutoCompleteResult.vue";
 import { useBooksStore } from "./stores/books";
 import { useCitiesStore } from "./stores/cities";
 
@@ -13,13 +13,17 @@ const citiesQueryResults = computed<AutoCompleteOption[]>(() =>
 );
 
 const booksStore = useBooksStore();
-
 const booksQueryResults = computed<AutoCompleteOption[]>(() =>
   booksStore.partiallyMatchingTitles.map(({ title, author }) => ({
     primaryText: title,
     secondaryText: author,
   }))
 );
+
+const cityAutoComplete = ref();
+onMounted(() => {
+  cityAutoComplete.value?.focus();
+});
 </script>
 
 <template>
@@ -29,6 +33,7 @@ const booksQueryResults = computed<AutoCompleteOption[]>(() =>
       :queryResults="citiesQueryResults"
       label="Search for a city name:"
       noResultText="No matching cities found."
+      ref="cityAutoComplete"
     ></AutoCompleteInput>
 
     <AutoCompleteInput

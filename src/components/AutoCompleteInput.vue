@@ -26,6 +26,10 @@ const queryHasResults = computed(() => props.queryResults.length > 0);
 
 const state = reactive({ showResults: false });
 const input = ref<HTMLInputElement>();
+
+defineExpose({
+  focus: () => input.value?.focus(),
+});
 </script>
 
 <template>
