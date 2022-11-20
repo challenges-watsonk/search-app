@@ -1,42 +1,25 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import AutoCompleteInput from "./components/AutoCompleteInput.vue";
+import type { AutoCompleteOption } from "./components/AutoCompleteOption";
 import { useCitiesStore } from "./stores/cities";
 
 const citiesStore = useCitiesStore();
-const queryCanAutocomplete = computed(() => citiesStore.nameQuery.length > 2);
-const queryHasResults = computed(
-  () => citiesStore.partiallyMatchingNames.length > 0
+const queryResults = computed<AutoCompleteOption[]>(() =>
+  citiesStore.partiallyMatchingNames.map((name) => ({
+    primaryText: name,
+  }))
 );
 </script>
 
 <template>
   <main>
-    <label for="city-name-search">Search for a city name:</label>
-    <input
+    <AutoCompleteInput
       v-model="citiesStore.nameQuery"
-      type="text"
-      id="city-name-search"
-      name="city-name-search"
-    />
-    <template v-if="queryCanAutocomplete">
-      <select
-        v-if="queryHasResults"
-        name="city-name-autocomplete"
-        id="city-name-autocomplete"
-      >
-        <option
-          v-for="name in citiesStore.partiallyMatchingNames"
-          :value="name"
-          :key="name"
-        >
-          {{ name }}
-        </option>
-      </select>
-      <p v-if="!queryHasResults">No matching cities found.</p>
-    </template>
-    <p v-if="!queryCanAutocomplete">
-      Enter 3 or more letters to see autocomplete options.
-    </p>
+      :queryResults="queryResults"
+      label="Search for a city name:"
+      noResultText="No matching cities found."
+    ></AutoCompleteInput>
   </main>
 </template>
 
