@@ -36,6 +36,8 @@ The stores could be populated with data in many other ways but I thought the two
 
 Unit tests could be added to the store to check the logic of the getters. Since this query logic is also tested in the `App` tests I found it unimportant for this app.
 
+The tests could use page model and/or some setup function to avoid repeating common things like focussing the input to type (things that happen in the browser etc).
+
 The `AutoCompleteInput` could accept slots for rendering the prompts (or even the results) instead of passing strings and objects in the props. Only text needed to be rendered for these prompts though so this wasn't essential.
 
 Extra query logic could be used for the store. Things like only matching the query text to the start of the city name or title, or matching without case sensitivity.
