@@ -41,5 +41,8 @@ const booksQueryResults = computed<AutoCompleteOption[]>(() =>
 </template>
 
 <style scoped>
-/** TODO: add style for app */
+main {
+  display: flex;
+  width: 100%;
+}
 </style>

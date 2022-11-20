@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, reactive, ref } from "vue";
 import type { AutoCompleteOption } from "./AutoCompleteOption";
 
 const props = withDefaults(
@@ -21,37 +21,85 @@ const queryCanAutocomplete = computed(
   () => props.modelValue.length >= props.minimumQueryLength
 );
 const queryHasResults = computed(() => props.queryResults.length > 0);
+
+const state = reactive({ showResults: false });
+const input = ref<HTMLInputElement>();
 </script>
 
 <template>
-  <label
-    >{{ label }}
-    <input
-      :value="props.modelValue"
-      @input="
-        emit('update:modelValue', ($event.target as HTMLInputElement).value)
-      "
-      type="text"
-    />
-  </label>
-  <template v-if="queryCanAutocomplete">
-    <select v-if="queryHasResults">
-      <option
-        v-for="result in queryResults"
-        :value="result.primaryText"
-        :key="result.primaryText"
-      >
-        <em>{{ result.primaryText }}</em
-        >{{ result.secondaryText }}
-      </option>
-    </select>
-    <p v-if="!queryHasResults">{{ noResultText }}</p>
-  </template>
-  <p v-if="!queryCanAutocomplete">
-    Enter {{ minimumQueryLength }} or more letters to see autocomplete options.
-  </p>
+  <div class="autocomplete-container">
+    <label
+      ><p>{{ label }}</p>
+      <input
+        :value="props.modelValue"
+        @input="
+          emit('update:modelValue', ($event.target as HTMLInputElement).value)
+        "
+        type="text"
+        @focus="state.showResults = true"
+        @blur="state.showResults = false"
+        ref="input"
+      />
+    </label>
+    <div class="dropdown" v-if="state.showResults">
+      <template v-if="queryCanAutocomplete">
+        <div
+          class="result"
+          v-for="result in queryResults"
+          :key="result.primaryText"
+          @mousedown="$event.preventDefault()"
+          @mouseup="
+            () => {
+              emit('update:modelValue', result.primaryText);
+              input?.blur();
+            }
+          "
+        >
+          <em>{{ result.primaryText }}</em
+          >{{ result.secondaryText }}
+        </div>
+        <p v-if="!queryHasResults">{{ noResultText }}</p>
+      </template>
+      <div>
+        <p class="prompt" v-if="!queryCanAutocomplete">
+          Enter {{ minimumQueryLength }} or more letters to see autocomplete
+          options.
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
-/** TODO: add style for component */
+.autocomplete-container {
+  margin: 1rem;
+  width: 10rem;
+}
+label {
+  display: block;
+}
+input {
+  background: var(--color-background-soft);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  width: 100%;
+  font-size: 1em;
+}
+input:focus {
+  outline: none;
+  border: 1px solid var(--color-border-hover);
+}
+.dropdown {
+  max-height: 5rem;
+  overflow: auto;
+  position: relative;
+  background: var(--color-background-soft);
+  z-index: 100;
+}
+.result {
+  cursor: pointer;
+}
+.result:hover {
+  background: var(--color-background);
+}
 </style>

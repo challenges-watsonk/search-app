@@ -14,6 +14,7 @@ describe("city search autocomplete", () => {
     const searchInput = getByLabelText<HTMLInputElement>(
       "Search for a city name:"
     );
+    await fireEvent.focus(searchInput);
 
     expect(queryByText("No matching cities found.")).toBeNull();
 
@@ -61,6 +62,7 @@ describe("book search autocomplete", () => {
     const searchInput = getByLabelText<HTMLInputElement>(
       "Search for a book title:"
     );
+    await fireEvent.focus(searchInput);
 
     expect(queryByText("No matching books found.")).toBeNull();
 
