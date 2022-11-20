@@ -24,22 +24,18 @@ const queryHasResults = computed(() => props.queryResults.length > 0);
 </script>
 
 <template>
-  <label for="city-name-search">{{ label }}</label>
-  <input
-    :value="props.modelValue"
-    @input="
-      emit('update:modelValue', ($event.target as HTMLInputElement).value)
-    "
-    type="text"
-    id="city-name-search"
-    name="city-name-search"
-  />
+  <label
+    >{{ label }}
+    <input
+      :value="props.modelValue"
+      @input="
+        emit('update:modelValue', ($event.target as HTMLInputElement).value)
+      "
+      type="text"
+    />
+  </label>
   <template v-if="queryCanAutocomplete">
-    <select
-      v-if="queryHasResults"
-      name="city-name-autocomplete"
-      id="city-name-autocomplete"
-    >
+    <select v-if="queryHasResults">
       <option
         v-for="result in queryResults"
         :value="result.primaryText"
