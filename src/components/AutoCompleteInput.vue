@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import type { AutoCompleteOption } from "./AutoCompleteOption";
+import AutoCompleteResult, {
+  type AutoCompleteOption,
+} from "./AutoCompleteResult.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -43,21 +45,18 @@ const input = ref<HTMLInputElement>();
     </label>
     <div class="dropdown" v-if="state.showResults">
       <template v-if="queryCanAutocomplete">
-        <div
-          class="result"
+        <AutoCompleteResult
           v-for="result in queryResults"
           :key="result.primaryText"
-          @mousedown="$event.preventDefault()"
-          @mouseup="
+          @click="
             () => {
               emit('update:modelValue', result.primaryText);
               input?.blur();
             }
           "
+          v-bind="result"
         >
-          <em>{{ result.primaryText }}</em
-          >{{ result.secondaryText }}
-        </div>
+        </AutoCompleteResult>
         <p v-if="!queryHasResults">{{ noResultText }}</p>
       </template>
       <div>
@@ -95,11 +94,5 @@ input:focus {
   position: relative;
   background: var(--color-background-soft);
   z-index: 100;
-}
-.result {
-  cursor: pointer;
-}
-.result:hover {
-  background: var(--color-background);
 }
 </style>
